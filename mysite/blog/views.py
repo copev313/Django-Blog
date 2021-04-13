@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
+from .forms import EmailPostForm
 from .models import Post
 
 
@@ -45,3 +46,26 @@ def post_detail(request, year, month, day, post):
     return render(request,
                   'blog/post/detail.html',
                   {'post': post})
+
+
+def post_share(request, post_id):
+    # Retrieve our post by id:
+    post = get_object_or_404(Post, id=post_id, status='published')
+    # POST our form data
+    if (request.method == 'POST'):
+        # Form was submitted:
+        form = EmailPostForm(request.POST)
+
+        # [CASE] Form is successfully validated:
+        if form.is_valid():
+            # Form fields passed validation:
+            cd = form.cleaned_data
+            # TODO: . . . send the email!
+        # [CASE] Form didn't pass validation:
+        else:
+            form = EmailPostForm()
+
+        return render(request,
+                      'blog/post/share.html',
+                      {'post': post,
+                       'form': form})
