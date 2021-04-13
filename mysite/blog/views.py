@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.mail import send_mail
 from django.views.generic import ListView
 from .forms import EmailPostForm
 from .models import Post
@@ -51,6 +51,9 @@ def post_detail(request, year, month, day, post):
 def post_share(request, post_id):
     # Retrieve our post by id:
     post = get_object_or_404(Post, id=post_id, status='published')
+    # Used to handle success message in our template:
+    sent = False
+
     # POST our form data
     if (request.method == 'POST'):
         # Form was submitted:
@@ -58,9 +61,15 @@ def post_share(request, post_id):
 
         # [CASE] Form is successfully validated:
         if form.is_valid():
-            # Form fields passed validation:
+            # Send email sharing post title + post URL:
             cd = form.cleaned_data
-            # TODO: . . . send the email!
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = f"{cd['name']} recommends that you read {post.title}"
+            message = f"You can read {post.title} at {post_url}\n\n" \
+                      f"{cd['name']}'s comments: {cd['comments']}"
+            send_mail(subject, message, 'copev313@gmail.com', [cd['to']])
+            sent = True
+
         # [CASE] Form didn't pass validation:
         else:
             form = EmailPostForm()
@@ -68,4 +77,5 @@ def post_share(request, post_id):
         return render(request,
                       'blog/post/share.html',
                       {'post': post,
-                       'form': form})
+                       'form': form,
+                       'sent': sent})
