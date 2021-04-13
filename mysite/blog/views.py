@@ -64,18 +64,19 @@ def post_share(request, post_id):
             # Send email sharing post title + post URL:
             cd = form.cleaned_data
             post_url = request.build_absolute_uri(post.get_absolute_url())
-            subject = f"{cd['name']} recommends that you read {post.title}"
-            message = f"You can read {post.title} at {post_url}\n\n" \
-                      f"{cd['name']}'s comments: {cd['comments']}"
+            subject = f"{cd['name']} recommends that you read \"{post.title}\""
+            message = f"You can read \"{post.title}\" at:  {post_url}\n\n" \
+                      f"{cd['name']}'s comments:\n\n\t{cd['comments']}" \
+                      "\n\nSincerely,\n📨 EMAILBOT @ MyDjangoBlog.com 🤖"
             send_mail(subject, message, 'copev313@gmail.com', [cd['to']])
             sent = True
 
-        # [CASE] Form didn't pass validation:
-        else:
-            form = EmailPostForm()
+    # GET our form
+    else:
+        form = EmailPostForm()
 
-        return render(request,
-                      'blog/post/share.html',
-                      {'post': post,
-                       'form': form,
-                       'sent': sent})
+    return render(request,
+                  'blog/post/share.html',
+                  {'post': post,
+                   'form': form,
+                   'sent': sent})
