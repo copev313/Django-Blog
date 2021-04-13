@@ -2,26 +2,59 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <!--
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    -->
+    <meta charset="UTF-8" >
+    <meta name="viewport"  content="width=device-width, initial-scale=1.0" >
     <title>{% block title %}{% endblock %}</title>
-
-    <link href="{% static 'css/blog.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}"  rel="stylesheet" >
+    <!--
+    <link href="{% static 'css/blog.css' %}"  rel="stylesheet" >
+    -->
 </head>
 
 <body>
-    <div class="content">
-        {% block content %}
-        {% endblock %}
-    </div>
+    <div class="container-lg content px-1">
+        <div class="row">
+            <div class="col-8">
+                {% block content %}
+                {% endblock %}
+            </div>
 
-    <div id="sidebar">
-        <h2>My Blog</h2>
-        <p>Welcome to my blog!</p>
+
+            <div class="col-3 card border-info my-3 ml-5 p-1">
+                <div class="card-body">
+                    <h4 class="card-title h3 pb-3 text-success">My Django Blog</h4>
+                    <p class="card-text">
+                        Welcome to my blog!
+                    </p>
+                    <p class="card-text">
+                        Browse around and see if you find anything you like. The posts are nonsense now, but maybe one day they won't be!
+                    </p>
+                    <p class="pt-3">
+                        <ins>TODOs</ins>
+                        <ul class="text-secondary">
+                            <li>Add more styling.</li>
+                            <li>Add a footer.</li>
+                            <li>Make the header more unique.</li>
+                            <li>Add comments feature.</li>
+                            <li>Add tags feature.</li>
+                            <li>Add the ability to share posts via email.</li>
+                        </ul>
+                    </p>
+                </div>
+              </div>
+<!--
+            <div class="col-3 container-sm mt-2">
+                <h2>My Blog</h2>
+                <p>Welcome to my blog!</p>
+            </div>
+-->
+        </div>
+
+        <div class="row">
+
+        </div>
     </div>
 </body>
 </html>

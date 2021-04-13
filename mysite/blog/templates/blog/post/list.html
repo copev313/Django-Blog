@@ -4,21 +4,24 @@
 {% block title %}My Blog{% endblock %}
 
 {% block content %}
-    <h1>My Blog</h1>
+    <h1 class="display-4 text-info pt-2 pb-2 border-bottom border-secondary">
+        My Blog
+    </h1>
 
-    {% for post in posts %}
-        <h2>
-            <a href="{{ post.get_absolute_url }}">
-                {{ post.title }}
-            </a>
-        </h2>
-        
-        <p class="date">
-            Published: {{ post.publish }} by {{ post.author }}.
-        </p>
+    <div class="d-flex flex-column mt-4">
+        {% for post in posts %}
+            <h2>
+                <a href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h2>
+            
+            <p class="text-muted fw-lighter">
+                Published: {{ post.publish }} by {{ post.author }}.
+            </p>
 
-        {{ post.body|truncatewords:30|linebreaks }}
-    {% endfor %}
-
-    {% include "pagination.html" with page=posts %}
+            {{ post.body|truncatewords:30|linebreaks }}
+        {% endfor %}
+    </div>
+    {% include "pagination.html" with page=page_obj %}
 {% endblock %}

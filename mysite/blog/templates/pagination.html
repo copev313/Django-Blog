@@ -1,16 +1,29 @@
 
 <div class="pagination">
-    <span class="step-links">
-        {% if page.has_previous %}
-            <a href="?page={{ page.previous_page_number }}">Previous</a>
-        {% endif %}
-
-        <span class="current">
-            (Page {{ page.number }} of {{ page.paginator.num_pages }})
+    <div class="btn-group">
+        <span class="step-links">
+            {% if page.has_previous %}
+                <span class="m-2 px-3 py-2 badge badge-pill badge-secondary">
+                    <a  class="text-light text-decoration-none"
+                        href="?page={{ page.previous_page_number }}">
+                        Previous
+                    </a>
+                </span>
+            {% endif %}
+    
+            <span class="px-3 py-1 border border-secondary border-2 rounded-pill current">
+                Page {{ page.number }} of {{ page.paginator.num_pages }}
+            </span>
+    
+            {% if page.has_next %}
+                <span class="m-2 px-3 py-2 badge badge-pill badge-secondary">
+                    <a  class="text-light text-decoration-none"
+                        href="?page={{ page.next_page_number }}">
+                        Next
+                    </a>
+                </span>
+            {% endif %}
         </span>
-
-        {% if page.has_next %}
-            <a href="?page={{ page.next_page_number }}">Next</a>
-        {% endif %}
-    </span>
+    </div>
+    
 </div>
