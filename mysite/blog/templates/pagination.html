@@ -1,12 +1,12 @@
 
-<div class="pagination">
+<div class="text-center">
     <div class="btn-group">
         <span class="step-links">
             {% if page.has_previous %}
                 <span class="m-2 px-3 py-2 badge badge-pill badge-secondary">
                     <a  class="text-light text-decoration-none"
                         href="?page={{ page.previous_page_number }}">
-                        Previous
+                        <i class="fas fa-chevron-left pr-1"></i> Previous
                     </a>
                 </span>
             {% endif %}
@@ -19,7 +19,7 @@
                 <span class="m-2 px-3 py-2 badge badge-pill badge-secondary">
                     <a  class="text-light text-decoration-none"
                         href="?page={{ page.next_page_number }}">
-                        Next
+                        Next <i class="fas fa-chevron-right pl-1"></i>
                     </a>
                 </span>
             {% endif %}

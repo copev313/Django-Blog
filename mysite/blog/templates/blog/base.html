@@ -4,17 +4,20 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport"  content="width=device-width, initial-scale=1.0" >
+    <meta charset="UTF-8" />
+    <meta name="viewport"  content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static 'css/bootstrap.min.css' %}"  rel="stylesheet" >
-    <!--
-    <link href="{% static 'css/blog.css' %}"  rel="stylesheet" >
-    -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+          crossorigin="anonymous" 
+    />
+    <link href="{% static 'css/bootstrap.min.css' %}"  rel="stylesheet" />
+    <link href="{% static 'css/blog.css' %}"  rel="stylesheet" />
 </head>
 
 <body>
-    <div class="container-lg content px-1">
+    <div class="container-lg px-3">
         <div class="row">
             <div class="col-8">
                 {% block content %}
@@ -24,7 +27,9 @@
 
             <div class="col-3 card border-info my-3 ml-5 p-1">
                 <div class="card-body">
-                    <h4 class="card-title h3 pb-3 text-success">My Django Blog</h4>
+                    <h3 class="h3 pb-3 text-success">
+                        My Django Blog
+                    </h3>
                     <p class="card-text">
                         Welcome to my blog!
                     </p>
@@ -33,13 +38,13 @@
                     </p>
                     <p class="pt-3">
                         <ins>TODOs</ins>
-                        <ul class="text-secondary">
+                        <ul class="text-secondary" id="todos-list">
                             <li>Add more styling.</li>
                             <li>Add a footer.</li>
                             <li>Make the header more unique.</li>
-                            <li>Add comments feature.</li>
-                            <li>Add tags feature.</li>
-                            <li>Add the ability to share posts via email.</li>
+                            <li class="text-success">Add comments feature.✔️</li>
+                            <li>Add tags feature. <br>[Coming Next!]</li>
+                            <li class="text-success">Add the ability to share posts via email.✔️</li>
                         </ul>
                     </p>
                 </div>
