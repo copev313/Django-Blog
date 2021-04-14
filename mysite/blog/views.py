@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
-from .forms import EmailPostForm
+
+from .forms import CommentForm, EmailPostForm
 from .models import Post
 
 
@@ -43,9 +44,33 @@ def post_detail(request, year, month, day, post):
                              publish__month=month,
                              publish__day=day)
 
+    # List of active comments for this post:
+    comments = post.comments.filter(active=True)
+
+    new_comment = None
+
+    # [CASE] POST request --> Post the comment:
+    if (request.method == 'POST'):
+        comment_form = CommentForm(data=request.POST)
+        # Validate form data:
+        if comment_form.is_valid():
+            # Create Comment object:
+            new_comment = comment_form.save(commit=False)
+            # Assign the comment ot the current post:
+            new_comment.post = post
+            # Finally, save the comment to the DB:
+            new_comment.save()
+
+    # [CASE] GET request --> Serve CommentForm:
+    else:
+        comment_form = CommentForm()
+
     return render(request,
                   'blog/post/detail.html',
-                  {'post': post})
+                  {'post': post,
+                   'comments': comments,
+                   'new_comment': new_comment,
+                   'comment_form': comment_form})
 
 
 def post_share(request, post_id):
@@ -54,12 +79,11 @@ def post_share(request, post_id):
     # Used to handle success message in our template:
     sent = False
 
-    # POST our form data
+    # [CASE] POST our form data
     if (request.method == 'POST'):
         # Form was submitted:
         form = EmailPostForm(request.POST)
-
-        # [CASE] Form is successfully validated:
+        # Validate form data:
         if form.is_valid():
             # Send email sharing post title + post URL:
             cd = form.cleaned_data
@@ -71,7 +95,7 @@ def post_share(request, post_id):
             send_mail(subject, message, 'copev313@gmail.com', [cd['to']])
             sent = True
 
-    # GET our form
+    # [CASE] GET our EmailPostForm
     else:
         form = EmailPostForm()
 

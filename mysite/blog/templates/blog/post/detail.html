@@ -4,17 +4,74 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
-    <p class="date">
-        Published: {{ post.publish }} by {{ post.author }}.
+    <h1 class="display-4 my-4">{{ post.title }}</h1>
+    <p class="text-right text-secondary text-muted">
+        Published: {{ post.publish }} by {{ post.author }}
     </p>
 
-    {{ post.body|linebreaks }}
+    <div class="container my-5">
+        {{ post.body|linebreaks }}
+    </div>
 
-    <p>
-        <a href="{% url 'blog:post_share' post.id %}">
-            Share this post
-        </a>
-    </p>
+    <div class="d-flex flex-row-reverse justify-content-start pt-2 pr-3">
+        <button type="button" class="btn btn-info ">
+            <a  class="text-light text-decoration-none p-1"
+                href="{% url 'blog:post_share' post.id %}">
+                📧 Share via Email
+            </a>
+        </button>
+    </div>
+
+    <hr>
+
+    <div class="container mt-2 mb-4">
+        {% with comments.count as total_comments %}
+            <h2 class="mb-4">{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+        {% endwith %}
+
+        {% for comment in comments %}
+            <div class="border border-secondary rounded px-3 mx-2 my-2">
+                <p>
+                    {{ comment.comment|linebreaks }}
+                </p>
+
+                <p class="text-right text-secondary text-muted fs-6 mb-2">
+                    by {{ comment.name }} on {{ comment.created }}
+                </p>
+            </div>
+
+            {% empty %}
+            <p class="text-success text-center">
+                <em>There are no comments yet. Be the first!</em>
+            </p>
+
+        {% endfor %}
+    </div>  
+
+    <hr>
+
+    <div class="container d-flex flex-column ">
+        {% if new_comment %}
+        <div>
+            <h2>Your comment has been added.</h2>
+        </div>
+        {% else %}
+            <div>
+                <h2>Add a new comment</h2>
+            </div>
+            <div>
+                <form class="m-2 p-1"
+                  method="post">
+                {{ comment_form.as_p }}
+                {% csrf_token %}
+                <p class="text-left">
+                    <input class="p-1 ml-6"
+                           type="submit" 
+                           value="Add Comment">
+                </p>
+            </form>
+            </div>
+        {% endif %}
+    </div>
 
 {% endblock %}
