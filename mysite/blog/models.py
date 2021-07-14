@@ -7,15 +7,17 @@ from django.urls import reverse
 class PublisherManager(models.Manager):
 
     def get_queryset(self):
-        return super(PublisherManager, self).get_queryset().filter(
-            status='published')
+        return super(PublisherManager, self).get_queryset()\
+                .filter(status='published')
 
 
 class Post(models.Model):
 
-    STATUS_CHOICES = (('draft', 'Draft'),
-                      ('published', 'Published'))
-
+    STATUS_CHOICES = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250,
                             unique_for_date='publish')
@@ -29,7 +31,11 @@ class Post(models.Model):
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
                               default='draft')
+    votes = models.IntegerField(default=0)
+
+    # The default manager:
     objects = models.Manager()
+    # Our custom manager:
     published = PublisherManager()
 
     class Meta:
