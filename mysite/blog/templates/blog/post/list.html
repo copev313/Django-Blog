@@ -2,14 +2,19 @@
 
 {% extends "blog/base.html" %}
 
-{% block title %}My Blog{% endblock %}
+{% block title %}Bloggio{% endblock %}
 
 {% block content %}
     <h1 class="display-4 text-info mt-4 pb-4 border-bottom border-secondary">
-        My Blog
+        Bloggio
     </h1>
     
     <div class="d-flex flex-column my-4">
+
+        {% if tag %}
+            <h3>Posts tagged with <span class="text-success">"{{ tag.name }}"</span></h3>
+        {% endif %}
+
         {% for post in posts %}
             <div class="border rounded  border-secondary my-2 p-3">
                 <h2 class="">
@@ -18,8 +23,18 @@
                     </a>
                 </h2>
 
-                <p class="text-muted fw-">
-                    {{ post.publish }} by {{ post.author }}.
+                <p class="text-muted">
+                    <span class="mr-2">{{ post.publish }} by {{ post.author }}.</span>
+                    <span class="tags">
+                        {% for tag in post.tags.all %}
+                            <span class="badge bg-info text-wrap">
+                                <a  href="{% url 'blog:post_list_by_tag' tag.slug %}"
+                                    class="text-decoration-none text-light">
+                                    {{ tag.name }}
+                                </a>
+                            </span>
+                        {% endfor %}
+                    </span>
                 </p>
     
                 {{ post.body | truncatewords:30 | linebreaks }}
@@ -27,5 +42,5 @@
         {% endfor %}
     </div>
 
-    {% include "./components/pagination.html" with page=page_obj %}
+    {% include "./components/pagination.html" with page=posts %}
 {% endblock %}

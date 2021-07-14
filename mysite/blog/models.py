@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 class PublisherManager(models.Manager):
@@ -32,6 +33,7 @@ class Post(models.Model):
                               choices=STATUS_CHOICES,
                               default='draft')
     votes = models.IntegerField(default=0)
+    tags = TaggableManager()
 
     # The default manager:
     objects = models.Manager()
