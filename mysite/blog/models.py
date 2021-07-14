@@ -2,20 +2,23 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 class PublisherManager(models.Manager):
 
     def get_queryset(self):
-        return super(PublisherManager, self).get_queryset().filter(
-            status='published')
+        return super(PublisherManager, self).get_queryset()\
+                .filter(status='published')
 
 
 class Post(models.Model):
 
-    STATUS_CHOICES = (('draft', 'Draft'),
-                      ('published', 'Published'))
-
+    STATUS_CHOICES = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250,
                             unique_for_date='publish')
@@ -29,7 +32,12 @@ class Post(models.Model):
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
                               default='draft')
+    votes = models.IntegerField(default=0)
+    tags = TaggableManager()
+
+    # The default manager:
     objects = models.Manager()
+    # Our custom manager:
     published = PublisherManager()
 
     class Meta:
@@ -47,17 +55,17 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-
-    post = models.ForeignKey(Post,
-                             on_delete=models.CASCADE,
-                             related_name='comments')
+    
+    id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(Post,  on_delete=models.CASCADE,
+                                    related_name='comments')
     name = models.CharField(max_length=80)
     email = models.EmailField()
-    comment = models.TextField()
+    body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-
+    
     class Meta:
         ordering = ('created', )
 

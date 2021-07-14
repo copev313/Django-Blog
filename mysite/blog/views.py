@@ -1,9 +1,11 @@
+from django.shortcuts import render, get_object_or_404
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-
-from .forms import CommentForm, EmailPostForm
-from .models import Post
+from django.db.models import Count
+from .forms import EmailPostForm, CommentForm
+from .models import Post, Comment
+from taggit.models import Tag
 
 
 class PostListView(ListView):
@@ -13,64 +15,78 @@ class PostListView(ListView):
     template_name = 'blog/post/list.html'
 
 
-'''
-def post_list(request):
-    object_list = Post.published.all()
-    # Display three posts on each page:
-    paginator = Paginator(object_list, 3)
+def post_list(request, tag_slug=None):
+    posts_list = Post.published.all()
+    tag = None
+    
+    # [CASE] Post has tags:
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts_list = posts_list.filter(tags__name__in=[tag])
+    
+    # Handle pagination:
+    paginator = Paginator(posts_list, 3)
     page = request.GET.get('page')
 
     try:
         posts = paginator.page(page)
+
     except PageNotAnInteger:
-        # When the page is not an integer, simple deliver the first page:
+        # If page is not an integer then deliver the first page:
         posts = paginator.page(1)
+
     except EmptyPage:
-        # If the page is out of range, then display the last page of results:
+        # If page is out of range then deliver last page of results:
         posts = paginator.page(paginator.num_pages)
 
     return render(request,
                   'blog/post/list.html',
-                  {'page': page,
-                   'posts': posts})
-'''
+                  { 'posts': posts, 'page': page, 'tag': tag })
 
 
 def post_detail(request, year, month, day, post):
-    post = get_object_or_404(Post,
-                             slug=post,
-                             status='published',
-                             publish__year=year,
-                             publish__month=month,
-                             publish__day=day)
+    post = get_object_or_404(Post,  slug=post,
+                                    status='published',
+                                    publish__year=year,
+                                    publish__month=month,
+                                    publish__day=day)
 
     # List of active comments for this post:
     comments = post.comments.filter(active=True)
 
     new_comment = None
 
-    # [CASE] POST request --> Post the comment:
+    # [CASE] POST a new comment:
     if (request.method == 'POST'):
+        # A comment was posted:
         comment_form = CommentForm(data=request.POST)
-        # Validate form data:
+        # Comment form is valid:
         if comment_form.is_valid():
             # Create Comment object:
             new_comment = comment_form.save(commit=False)
-            # Assign the comment ot the current post:
+            # Assign the current blog post to the comment:
             new_comment.post = post
-            # Finally, save the comment to the DB:
+            # Save the comment to the database:
             new_comment.save()
-
-    # [CASE] GET request --> Serve CommentForm:
+    
+    # [CASE] GET request:
     else:
         comment_form = CommentForm()
 
+    # List similar posts:
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.published.filter(tags__in=post_tags_ids)\
+                        .exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags'))\
+                            .order_by('-same_tags', 'publish')
+
     return render(request,
                   'blog/post/detail.html',
-                  {'post': post,
-                   'comments': comments,
-                   'new_comment': new_comment,
-                   'comment_form': comment_form})
+                  { 'post': post,
+                    'comments': comments,
+                    'new_comment': new_comment,
+                    'comment_form': comment_form,
+                    'similar_posts': similar_posts})
 
 
 def post_share(request, post_id):
@@ -79,11 +95,12 @@ def post_share(request, post_id):
     # Used to handle success message in our template:
     sent = False
 
-    # [CASE] POST our form data
+    # [CASE] POST our form data:
     if (request.method == 'POST'):
         # Form was submitted:
         form = EmailPostForm(request.POST)
-        # Validate form data:
+
+        # [CASE] Form is successfully validated:
         if form.is_valid():
             # Send email sharing post title + post URL:
             cd = form.cleaned_data
@@ -95,7 +112,7 @@ def post_share(request, post_id):
             send_mail(subject, message, 'copev313@gmail.com', [cd['to']])
             sent = True
 
-    # [CASE] GET our EmailPostForm
+    # [CASE] GET our form:
     else:
         form = EmailPostForm()
 

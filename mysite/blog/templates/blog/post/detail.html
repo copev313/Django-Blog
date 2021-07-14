@@ -1,77 +1,104 @@
 
 {% extends "blog/base.html" %}
+{% load blog_tags %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-    <h1 class="display-4 my-4">{{ post.title }}</h1>
-    <p class="text-right text-secondary text-muted">
-        Published: {{ post.publish }} by {{ post.author }}
+<div class="border border-3 border-dark rounded my-4 p-4">
+
+    <!-- POST TITLE -->
+    <h1>{{ post.title }}</h1>
+    <p class="date text-muted text-right border-bottom pb-2 pr-1 mb-4">
+        Posted {{ post.publish }} by {{ post.author }}
     </p>
 
-    <div class="container my-5">
-        {{ post.body|linebreaks }}
-    </div>
+    <!-- POST BODY -->
+    <div class="px-1">{{ post.body | markdown }}</div>
 
-    <div class="d-flex flex-row-reverse justify-content-start pt-2 pr-3">
-        <button type="button" class="btn btn-info ">
-            <a  class="text-light text-decoration-none p-1"
-                href="{% url 'blog:post_share' post.id %}">
-                📧 Share via Email
-            </a>
-        </button>
+    <!-- SHARE BUTTON -->
+    <div class="text-right mb-4">
+        <a href="{% url 'blog:post_share' post.id %}" class="text-decoration-none">
+            <span class="bg-info px-3 py-2 rounded-pill text-light">Share this Post</span>
+        </a>
     </div>
 
     <hr>
 
-    <div class="container mt-2 mb-4">
-        {% with comments.count as total_comments %}
-            <h2 class="mb-4">{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
-        {% endwith %}
+    <!-- SIMILAR POSTS SECTION -->
+    <div class="mb-5">
+        <h3>Similar Posts:</h3>
+        <ul class="list-group w-50 text-wrap">
 
-        {% for comment in comments %}
-            <div class="border border-secondary rounded px-3 mx-2 my-2">
-                <p>
-                    {{ comment.comment|linebreaks }}
-                </p>
-
-                <p class="text-right text-secondary text-muted fs-6 mb-2">
-                    by {{ comment.name }} on {{ comment.created }}
-                </p>
-            </div>
-
-            {% empty %}
-            <p class="text-success text-center">
-                <em>There are no comments yet. Be the first!</em>
-            </p>
-
+        {% for post in similar_posts %}
+            <li class="list-group-item d-flex justify-content-between align-items-center p-0 ">
+                <a  href="{{ post.get_absolute_url }}"
+                    class="list-group-item text-success">
+                    {{ post.title }}
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item d-flex justify-content-between align-items-center disabled">
+                There are no similar posts yet.
+            </li>
         {% endfor %}
-    </div>  
+
+        </ul>
+    </div>
 
     <hr>
 
-    <div class="container d-flex flex-column ">
-        {% if new_comment %}
-        <div>
-            <h2>Your comment has been added.</h2>
+    <!-- POST COMMENTS TITLE -->
+    {% with comments.count as total_comments %}
+        <h3>
+            {{ total_comments }} Comment{{ total_comments | pluralize }}:
+        </h3>
+    {% endwith %}
+
+    <!-- POST COMMENTS LIST -->
+    {% for comment in comments %}
+        <div class="comment ">
+            <figure class="d-inline-block w-50 border rounded px-3 py-2">
+                <blockquote>
+                  <p class="mb-0">{{ comment.body | linebreaks }}</p>
+                </blockquote>
+                <figcaption class="blockquote-footer text-muted">
+                    written by <cite title="">{{ comment.name }}</cite> on {{ comment.created }}
+                </figcaption>
+            </figure>
         </div>
+    
+    {% empty %}
+    <div class="mt-3">
+        <p class="text-muted pl-2">No comments yet. Be the first!</p>
+    </div>
+
+    {% endfor %}
+
+    <div class="mt-4">
+        {% if new_comment %}
+        <h2 class="text-success">Your comment has been added.</h2>
+
         {% else %}
-            <div>
-                <h2>Add a new comment</h2>
-            </div>
-            <div>
-                <form class="m-2 p-1"
-                  method="post">
-                {{ comment_form.as_p }}
+            <hr>
+            <h2>Add a new comment...</h2>
+            <form class="d-inline-block pl-2 w-75" method="POST">
                 {% csrf_token %}
-                <p class="text-left">
-                    <input class="p-1 ml-6"
-                           type="submit" 
-                           value="Add Comment">
-                </p>
+                {% for field in comment_form %}
+                    <div>
+                        {{ field.errors }}
+                        <div class="mt-3"> {{ field.label_tag }} </div>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                <input type="submit" value="Add Comment" class="ml-3 pl-2">
             </form>
-            </div>
+
         {% endif %}
     </div>
+    
+
+</div>
 
 {% endblock %}

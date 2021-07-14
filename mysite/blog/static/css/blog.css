@@ -1,12 +1,16 @@
 
-#posts-list-titles:hover {
-    font-style: underline;
+.light-blue {
+    color: rgb(32, 193, 221);
 }
 
-#published-by {
-    font-weight: bold;
+.dark-blue {
+    color: rgb(0, 69, 173);
 }
 
-#todos-list {
-    list-style: square;
+.orange {
+    color: #ff8800;
+}
+
+.purple {
+    color: rgb(95, 18, 131);
 }
