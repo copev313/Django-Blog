@@ -1,6 +1,7 @@
 
 
 {% extends "blog/base.html" %}
+{% load blog_tags %}
 
 {% block title %}Bloggio{% endblock %}
 
@@ -37,7 +38,7 @@
                     </span>
                 </p>
     
-                {{ post.body | truncatewords:30 | linebreaks }}
+                {{  post.body | markdown | truncatewords_html:30 }}
             </div>
         {% endfor %}
     </div>
