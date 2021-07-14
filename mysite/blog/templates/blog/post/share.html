@@ -16,7 +16,7 @@
 
     {% else %}
         <h1 class="mb-4">Share "{{ post.title }}" by Email!</h1>
-        <form class="pl-4" method="post">
+        <form class="pl-4" method="POST">
             {% csrf_token %}
 
             {% for field in form %}
@@ -32,4 +32,5 @@
 
     {% endif %}
 </div>
+
 {% endblock %}

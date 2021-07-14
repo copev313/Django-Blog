@@ -5,21 +5,74 @@
 
 {% block content %}
 <div class="border border-3 border-dark rounded my-4 p-4">
+
+    <!-- POST TITLE -->
     <h1>{{ post.title }}</h1>
     <p class="date text-muted text-right border-bottom pb-2 pr-1 mb-4">
-        Published: {{ post.publish }} by {{ post.author }}
+        Posted {{ post.publish }} by {{ post.author }}
     </p>
 
-    <div class="px-1">
-        {{ post.body | linebreaks }}
-    </div>
+    <!-- POST BODY -->
+    <div class="px-1">{{ post.body | linebreaks }}</div>
 
+    <!-- SHARE BUTTON -->
     <div class="text-right">
-        <a href="{% url 'blog:post_share' post.id %}" class="">
-            <span class="bg-info px-3 py-2 rounded-pill">Share this Post</span>
+        <a href="{% url 'blog:post_share' post.id %}" class="text-decoration-none">
+            <span class="bg-info px-3 py-2 rounded-pill text-light">Share this Post</span>
         </a>
     </div>
-</div>
+
+    <!-- POST COMMENTS TITLE -->
+    {% with comments.count as total_comments %}
+        <h3>
+            {{ total_comments }} Comment{{ total_comments | pluralize }}:
+        </h3>
+    {% endwith %}
+
+    <!-- POST COMMENTS LIST -->
+    {% for comment in comments %}
+        <div class="comment ">
+            <figure class="d-inline-block w-50 border rounded px-3 py-2">
+                <blockquote>
+                  <p class="mb-0">{{ comment.body | linebreaks }}</p>
+                </blockquote>
+                <figcaption class="blockquote-footer">
+                    written by <cite title="">{{ comment.name }}</cite> on {{ comment.created }}
+                </figcaption>
+            </figure>
+        </div>
     
+    {% empty %}
+    <div class="mt-4">
+        <p class="text-muted pl-2">There are no comments yet.</p>
+    </div>
+
+    {% endfor %}
+
+    <div class="mt-4">
+        {% if new_comment %}
+        <h2 class="text-success">Your comment has been added.</h2>
+
+        {% else %}
+            <hr>
+            <h2>Add a new comment...</h2>
+            <form class="pl-2" method="POST">
+                {% csrf_token %}
+                {% for field in comment_form %}
+                    <div>
+                        {{ field.errors }}
+                        <div class="mt-3"> {{ field.label_tag }} </div>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                <input type="submit" value="Add Comment" class="ml-3 pl-2">
+            </form>
+
+        {% endif %}
+    </div>
+    
+
+</div>
 
 {% endblock %}
