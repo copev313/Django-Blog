@@ -1,5 +1,5 @@
 
-<div class="pagination">
+<div class="pagination d-flex justify-content-center">
     <div class="btn-group">
         <span class="step-links">
             {% if page.has_previous %}
@@ -9,6 +9,12 @@
                         Previous
                     </a>
                 </span>
+
+            {% else %}
+            <span class="invisible m-2 px-3 py-2 badge badge-pill badge-secondary">
+                <div  class="text-light text-decoration-none">Previous</div>
+            </span>
+
             {% endif %}
     
             <span class="px-3 py-1 border border-secondary border-2 rounded-pill current">
@@ -21,6 +27,11 @@
                         href="?page={{ page.next_page_number }}">
                         Next
                     </a>
+                </span>
+
+            {% else %}
+                <span class="invisible m-2 px-3 py-2 badge badge-pill badge-secondary">
+                    <div  class="text-light text-decoration-none">Next</div>
                 </span>
             {% endif %}
         </span>
