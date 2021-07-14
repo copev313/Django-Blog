@@ -1,27 +1,31 @@
 
+
 {% extends "blog/base.html" %}
 
 {% block title %}My Blog{% endblock %}
 
 {% block content %}
-    <h1 class="display-4 text-info pt-2 pb-2 border-bottom border-secondary">
+    <h1 class="display-4 text-info mt-4 pb-4 border-bottom border-secondary">
         My Blog
     </h1>
-
-    <div class="d-flex flex-column mt-4">
+    
+    <div class="d-flex flex-column my-4">
         {% for post in posts %}
-            <h2>
-                <a href="{{ post.get_absolute_url }}">
-                    {{ post.title }}
-                </a>
-            </h2>
-            
-            <p class="text-muted fw-lighter">
-                Published: {{ post.publish }} by {{ post.author }}.
-            </p>
+            <div class="border rounded  border-secondary my-2 p-3">
+                <h2 class="">
+                    <a href="{{ post.get_absolute_url }}">
+                        {{ post.title }}
+                    </a>
+                </h2>
 
-            {{ post.body|truncatewords:30|linebreaks }}
+                <p class="text-muted fw-">
+                    {{ post.publish }} by {{ post.author }}.
+                </p>
+    
+                {{ post.body | truncatewords:30 | linebreaks }}
+            </div>
         {% endfor %}
     </div>
-    {% include "pagination.html" with page=page_obj %}
+
+    {% include "./components/pagination.html" with page=page_obj %}
 {% endblock %}
