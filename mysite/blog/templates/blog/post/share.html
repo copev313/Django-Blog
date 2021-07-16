@@ -1,5 +1,6 @@
 
 {% extends "blog/base.html" %}
+{% load widget_tweaks %}
 
 {% block title %}Share a post{% endblock %}
 
@@ -16,20 +17,26 @@
 
     {% else %}
         <h1 class="mb-4">Share "{{ post.title }}" by Email!</h1>
-        <form class="pl-4" method="POST">
+        <form class="pl-4 py-3" method="POST">
             {% csrf_token %}
+            {{ form.errors }}
 
-            {% for field in form %}
-                <div>
-                    {{ field.errors }}
-                    <div class="mt-3"> {{ field.label_tag }} </div>
-                    {{ field }}
-                </div>
-            {% endfor %}
+            <div class="my-4">
+               {{ form.name | add_class:"px-2" | append_attr:"placeholder=Name"}}
+               {{ form.email  | add_class:"px-2 mx-3" | append_attr:"placeholder=Email"}}
+            </div>
 
-            <input type="submit" value="Send Email">
+            <div class="mb-4">
+                {{ form.to.label }}: 
+                {{ form.to | add_class:"px-2" | append_attr:"placeholder=Recipient"}}
+             </div>
+
+             <div>
+                {{ form.comments | add_class:"p-3" | append_attr:"placeholder=Comments..."}}
+             </div>
+
+            <input type="submit" value="Send Email" class="py-1 px-2 ml-3 mt-3">
         </form>
-
     {% endif %}
 </div>
 

@@ -1,6 +1,7 @@
 
 {% extends "blog/base.html" %}
 {% load blog_tags %}
+{% load widget_tweaks %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
@@ -84,15 +85,19 @@
             <h2>Add a new comment...</h2>
             <form class="d-inline-block pl-2 w-75" method="POST">
                 {% csrf_token %}
-                {% for field in comment_form %}
-                    <div>
-                        {{ field.errors }}
-                        <div class="mt-3"> {{ field.label_tag }} </div>
-                        {{ field }}
-                    </div>
-                {% endfor %}
+                {{ form.errors }}
 
-                <input type="submit" value="Add Comment" class="ml-3 pl-2">
+                <div class="mb-4">
+                    {{ comment_form.name | add_class:"px-2" | append_attr:"placeholder=Name" }}
+                
+                    {{ comment_form.email | add_class:"px-2 mx-4" | append_attr:"placeholder=Email"}}
+                </div>
+
+                <div class="mb-3">
+                    {{ comment_form.body | add_class:"p-2" | append_attr:"placeholder=Comment... "}}
+                </div>
+
+                <input type="submit" value="Add Comment" class="ml-2 pl-2">
             </form>
 
         {% endif %}

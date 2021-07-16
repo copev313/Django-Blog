@@ -11,3 +11,4 @@ This project was made as part of a series of projects to learn Django.
  - Custom template tags and filters
  - Sitemap and post feed
  - Pagination
+

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 
     'blog.apps.BlogConfig',
     'taggit',
-    
+    'widget_tweaks',
+
     'django.contrib.sites',
     'django.contrib.sitemaps',
 ]
@@ -135,3 +136,12 @@ EMAIL_USE_TLS = True
 # Enter your gmail account credentials:
 EMAIL_HOST_USER = os.environ.get('GMAIL_USER')          
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+
+
+# Configure Django App for Heroku.
+# Set DEBUG to False when we're on Heroku and in production:
+if (os.getcwd() == '/app'):
+    DEBUG = False
+
+import django_heroku
+django_heroku.settings(locals())
