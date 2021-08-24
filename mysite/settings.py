@@ -108,6 +108,7 @@ DATABASES = {
     }
 }
 
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -139,12 +140,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 
-# Sending Emails via SMTP (Simple Mail Transfer Protocol):
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Sending Emails via SMTP (Simple Mail Transfer Protocol):
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -158,6 +164,3 @@ EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 # Set DEBUG to False when we're on Heroku and in production:
 if (os.getcwd() == '/app'):
     DEBUG = False
-
-import django_heroku
-django_heroku.settings(locals())
